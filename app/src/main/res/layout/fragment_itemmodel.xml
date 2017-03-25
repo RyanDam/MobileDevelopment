@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="148dp"
+        app:cardElevation="0dp"
+        android:id="@+id/thumbnail_holder">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/thumbnail"
+            android:scaleType="centerCrop"
+            android:src="@drawable/toolbar_background" />
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="The Basics Of Western Astrology Explained"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:typeface="serif" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:singleLine="true"
+        android:text="12 Jul 2017 - www.example.com/the-basic-running/1"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="What is the loop of Creation? How is there something from nothing? In spite of the fact that it is impossible to prove that anything exists beyond one’s perception since any such proof would involve one’s perception (I observed it, I heard it, I thought about it, I calculated it, and etc.),…"
+        android:textSize="14sp" />
+</LinearLayout>
