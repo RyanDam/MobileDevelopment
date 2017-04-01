@@ -7,6 +7,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -14,6 +17,8 @@ import com.rstudio.assmb.latie.contentfragment.ItemModelFragment;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity implements ItemModelFragment.OnListFragmentInteractionListener {
+
+    private String TAG = "MainActivity";
 
     private BottomNavigationView mNavigation;
     private ItemModelFragment mAllItemContentFragment;
@@ -60,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
         Intent intent = new Intent(this, ContentDetailActivity.class);
+
+        Bundle itemBundle = item.toBundle();
+        intent.putExtra("ITEM", itemBundle);
+
         startActivity(intent);
     }
 

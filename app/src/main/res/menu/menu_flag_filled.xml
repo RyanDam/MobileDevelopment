@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ContentDetailActivity">
     <item
-        android:id="@+id/liked"
+        android:id="@+id/like"
         android:orderInCategory="300"
         android:title="User"
-        android:icon="@drawable/likeempty"
+        android:icon="@drawable/likefill"
         app:showAsAction="ifRoom"></item>
 </menu>

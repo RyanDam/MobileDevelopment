@@ -41,6 +41,8 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
 //        holder.mIdView.setText(mValues.get(position).id);
 //        holder.mContentView.setText(mValues.get(position).content);
 
+        holder.mDateView.setText(holder.mItem.getDateTime() + " " + holder.mItem.originLink);
+
         if (position % 4 == 0 || position == 0) {
             holder.mThumbView.setVisibility(View.GONE);
         } else {

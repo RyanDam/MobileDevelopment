@@ -1,6 +1,10 @@
 package com.rstudio.assmb.latie.contentfragment.dummy;
 
+import android.os.Bundle;
+
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +42,13 @@ public class DummyContent {
     }
 
     private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+        Date date = new Date();
+        return new DummyItem(String.valueOf(position)
+                , "Item " + position
+                , makeDetails(position)
+                , "http://abc.com/aS4d"
+                , true
+                , date.getTime());
     }
 
     private static String makeDetails(int position) {
@@ -56,12 +66,43 @@ public class DummyContent {
     public static class DummyItem {
         public final String id;
         public final String content;
-        public final String details;
+        public final String title;
+        public final String originLink;
+        public final long time;
+        public boolean isLiked;
 
-        public DummyItem(String id, String content, String details) {
+        public DummyItem(String id, String title, String content, String originLink, boolean isLiked, long time) {
             this.id = id;
+            this.title = title;
             this.content = content;
-            this.details = details;
+            this.originLink = originLink;
+            this.time = time;
+            this.isLiked = isLiked;
+        }
+
+        public DummyItem(Bundle bundle) {
+            this(bundle.getString("ID")
+                    , bundle.getString("DETAILS")
+                    , bundle.getString("CONTENT")
+                    , bundle.getString("ORIGIN_LINK")
+                    , bundle.getBoolean("LIKED")
+                    , bundle.getLong("TIME"));
+        }
+
+        public CharSequence getDateTime() {
+            CharSequence ret = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date());
+            return ret;
+        }
+
+        public Bundle toBundle() {
+            Bundle ret = new Bundle();
+            ret.putString("ID", this.id);
+            ret.putString("CONTENT", this.content);
+            ret.putString("DETAILS", this.title);
+            ret.putString("ORIGIN_LINK", this.originLink);
+            ret.putLong("TIME", this.time);
+            ret.putBoolean("LIKED", this.isLiked);
+            return ret;
         }
 
         @Override
