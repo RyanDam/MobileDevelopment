@@ -1,5 +1,6 @@
 package com.rstudio.assmb.latie;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -85,6 +86,12 @@ public class ContentDetailActivity extends AppCompatActivity {
                 // unlike article
                 mItem.isLiked = !mItem.isLiked;
                 supportInvalidateOptionsMenu();
+                break;
+            case R.id.share:
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/html");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mItem.content);
+                startActivity(Intent.createChooser(sharingIntent, "Share using"));
                 break;
         }
 
