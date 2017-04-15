@@ -22,6 +22,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(Constant.FeedEntry.KEY_TIME, dummyItem.time);
             values.put(Constant.FeedEntry.KEY_CONTENT, dummyItem.content);
             values.put(Constant.FeedEntry.KEY_LINK, dummyItem.originLink);
+            values.put(Constant.FeedEntry.KEY_ISLIKED, dummyItem.isLiked);
             return values;
         }
     }
@@ -68,7 +69,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             long time = cursor.getLong(2);
             String content = cursor.getString(3);
             String link = cursor.getString(4);
-            dummyItem = new DummyContent.DummyItem(id, title, content, link, true, time);
+            Boolean isLiked = cursor.getInt(5) != 0;
+
+            dummyItem = new DummyContent.DummyItem(id, title, content, link, isLiked, time);
         }
 
         cursor.close();
@@ -90,8 +93,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 long time = cursor.getLong(2);
                 String content = cursor.getString(3);
                 String link = cursor.getString(4);
+                Boolean isLiked = cursor.getInt(5) != 0;
 
-                dummyItemList.add(new DummyContent.DummyItem(id, title, content, link, true, time));
+                dummyItemList.add(new DummyContent.DummyItem(id, title, content, link, isLiked, time));
             } while (cursor.moveToNext());
         }
 

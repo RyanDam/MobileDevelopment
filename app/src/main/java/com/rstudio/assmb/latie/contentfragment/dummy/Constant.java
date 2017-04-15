@@ -18,6 +18,7 @@ public class Constant {
         public static final String KEY_TIME = "time";
         public static final String KEY_CONTENT = "content";
         public static final String KEY_LINK = "link";
+        public static final String KEY_ISLIKED = "isLiked";
     }
 
     public class Database {
@@ -27,7 +28,8 @@ public class Constant {
                         FeedEntry.KEY_TITLE + " TEXT," +
                         FeedEntry.KEY_TIME + " INTEGER," +
                         FeedEntry.KEY_CONTENT + " TEXT," +
-                        FeedEntry.KEY_LINK + " TEXT" +
+                        FeedEntry.KEY_LINK + " TEXT," +
+                        FeedEntry.KEY_ISLIKED + " BOOLEAN" +
                         ");";
 
         public static final String SQL_DROP_ENTRIES =
