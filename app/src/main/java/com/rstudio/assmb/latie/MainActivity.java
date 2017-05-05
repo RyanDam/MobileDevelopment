@@ -1,16 +1,22 @@
 package com.rstudio.assmb.latie;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                 Toast.makeText(this, "You received text!", Toast.LENGTH_SHORT).show();
                 String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
                 if(receivedText != null) {
+                   sendNotification();
+
                     Toast.makeText(this, receivedText, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -84,6 +92,23 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
             //app has been launched directly, not from share list
             //Toast.makeText(this, "HAHAHAHAHAHAHAHAHA", Toast.LENGTH_SHORT).show();
         }
+    }
+    public void sendNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_home_black_24dp)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World");
+        Intent notificationInetent = new Intent(this, MainActivity.class);
+        notificationInetent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,0, notificationInetent,PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(0, mBuilder.build());
+
+
     }
 
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
