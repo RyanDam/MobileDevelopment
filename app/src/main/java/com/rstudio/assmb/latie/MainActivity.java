@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rstudio.assmb.latie.contentfragment.ItemModelFragment;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
@@ -61,6 +62,28 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
         mNavigation = ((BottomNavigationView) findViewById(R.id.navigation));
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        receivedContent();
+
+    }
+    public void receivedContent() {
+        //get the received intent
+        Intent receivedIntent = getIntent();
+        String receivedAction = receivedIntent.getAction();
+        //find out what we are dealing with
+        String receivedType = receivedIntent.getType();
+        if(receivedAction.equals(Intent.ACTION_SEND)){
+            //content is being shared
+            if(receivedType.startsWith("text/")){
+                Toast.makeText(this, "You received text!", Toast.LENGTH_SHORT).show();
+                String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
+                if(receivedText != null) {
+                    Toast.makeText(this, receivedText, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else if(receivedAction.equals(Intent.ACTION_MAIN)){
+            //app has been launched directly, not from share list
+            //Toast.makeText(this, "HAHAHAHAHAHAHAHAHA", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onListFragmentInteraction(DummyContent.DummyItem item) {

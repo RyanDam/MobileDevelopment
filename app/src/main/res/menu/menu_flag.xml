@@ -10,4 +10,11 @@
         android:title="User"
         android:icon="@drawable/likeempty"
         app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/share"
+        android:orderInCategory="300"
+        android:title="User"
+        android:icon="@drawable/star"
+        app:showAsAction="ifRoom">
+    </item>
 </menu>
