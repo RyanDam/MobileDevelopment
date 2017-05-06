@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.webkit.URLUtil;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +78,13 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                 Toast.makeText(this, "You received text!", Toast.LENGTH_SHORT).show();
                 String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
                 if(receivedText != null) {
-                    Toast.makeText(this, receivedText, Toast.LENGTH_SHORT).show();
+                    if(URLUtil.isValidUrl(receivedText)) {
+
+                        Toast.makeText(this, "This is a link", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(this, receivedText, Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         }else if(receivedAction.equals(Intent.ACTION_MAIN)){
