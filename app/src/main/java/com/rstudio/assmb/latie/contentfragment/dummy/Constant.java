@@ -1,4 +1,4 @@
-package com.rstudio.assmb.latie.contentfragment.dummy;
+package com.rstudio.assmb.latie.contentfragment.dummy.model;
 
 import android.provider.BaseColumns;
 
