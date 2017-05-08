@@ -1,10 +1,12 @@
-package com.rstudio.assmb.latie.contentfragment.dummy;
+package com.rstudio.assmb.latie.contentfragment.dummy.model;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(Constant.FeedEntry.KEY_LINK, dummyItem.originLink);
             values.put(Constant.FeedEntry.KEY_ISLIKED, dummyItem.isLiked);
             return values;
+        }
+        public static List<DummyContent.DummyItem> cursor2ListDummyItem(Cursor cursor){
+            List<DummyContent.DummyItem> dummyItemList = null;
+
+            if (cursor.moveToFirst()) {
+                dummyItemList = new ArrayList<DummyContent.DummyItem>();
+                do {
+                    String id = cursor.getString(0);
+                    String title = cursor.getString(1);
+                    long time = cursor.getLong(2);
+                    String content = cursor.getString(3);
+                    String link = cursor.getString(4);
+                    Boolean isLiked = cursor.getInt(5) != 0;
+
+                    dummyItemList.add(new DummyContent.DummyItem(id, title, content, link, isLiked, time));
+                } while (cursor.moveToNext());
+            }
+
+            return dummyItemList;
         }
     }
 
@@ -57,48 +78,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public DummyContent.DummyItem getDummyItemById(String id){
         SQLiteDatabase db = this.getReadableDatabase();
-        DummyContent.DummyItem dummyItem = null;
-
-
         String sql = Constant.Database.SQL_SELECT + " WHERE " + Constant.FeedEntry._ID + " = " + id;
-
         Cursor cursor = db.rawQuery(sql, null);
-
-        if (cursor.moveToFirst()) {
-            String title = cursor.getString(1);
-            long time = cursor.getLong(2);
-            String content = cursor.getString(3);
-            String link = cursor.getString(4);
-            Boolean isLiked = cursor.getInt(5) != 0;
-
-            dummyItem = new DummyContent.DummyItem(id, title, content, link, isLiked, time);
-        }
-
+        DummyContent.DummyItem dummyItem = Lib.cursor2ListDummyItem(cursor).remove(0);
         cursor.close();
         db.close();
         return dummyItem;
     }
 
     public List<DummyContent.DummyItem> getAllDummyItem() {
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(Constant.Database.SQL_SELECT, null);
-        List<DummyContent.DummyItem> dummyItemList = null;
+        List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
+        cursor.close();
+        db.close();
+        return dummyItemList;
+    }
 
-        if (cursor.moveToFirst()) {
-            dummyItemList = new ArrayList<DummyContent.DummyItem>();
-            do {
-                String id = cursor.getString(0);
-                String title = cursor.getString(1);
-                long time = cursor.getLong(2);
-                String content = cursor.getString(3);
-                String link = cursor.getString(4);
-                Boolean isLiked = cursor.getInt(5) != 0;
-
-                dummyItemList.add(new DummyContent.DummyItem(id, title, content, link, isLiked, time));
-            } while (cursor.moveToNext());
-        }
-
+    // TODO: Testing the func getAllDummyItemIsLiked()
+    public List<DummyContent.DummyItem> getAllDummyItemIsLiked(){
+        String sql = Constant.Database.SQL_SELECT + " WHERE " + Constant.FeedEntry.KEY_ISLIKED + " = TRUE";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+        List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
         cursor.close();
         db.close();
         return dummyItemList;
@@ -107,7 +109,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public boolean update(DummyContent.DummyItem oldDI, DummyContent.DummyItem newDI) {
 
         boolean success = false;
-
 
         ContentValues values = Lib.DummyItem2ContentValues(newDI);
 
@@ -125,6 +126,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.close();
         }
         return success;
+    }
+
+    // TODO: updating like of DummyItem
+    public boolean updateLike(DummyContent.DummyItem dummyItem){
+        DummyContent.DummyItem newDI = new DummyContent.DummyItem(dummyItem.id, dummyItem.title, dummyItem.content, dummyItem.originLink, !dummyItem.isLiked, dummyItem.time);
+        return update(dummyItem, newDI);
     }
 
     public boolean delete(DummyContent.DummyItem dummyItem) {
@@ -146,4 +153,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return success;
     }
 
+    // TODO: AllContent -> Archive || Archive -> AllContent
+    
 }
