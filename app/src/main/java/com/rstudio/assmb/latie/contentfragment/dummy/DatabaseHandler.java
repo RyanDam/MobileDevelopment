@@ -55,11 +55,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Constant.Database.SQL_CREATE_ENTRIES);
+        db.execSQL(Constant.Database.SQL_CREATE_ARCHIVE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(Constant.Database.SQL_DROP_ENTRIES);
+        db.execSQL(Constant.Database.SQL_DROP_ARCHIVE);
         onCreate(db);
     }
 
@@ -154,5 +156,72 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // TODO: AllContent -> Archive || Archive -> AllContent
+
+    public DummyContent.DummyItem getDummyItemByIdArchive(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = Constant.Database.SQL_SELECT_ARCHIVE + " WHERE " + Constant.FeedEntry._ID + " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+        DummyContent.DummyItem dummyItem = Lib.cursor2ListDummyItem(cursor).remove(0);
+        cursor.close();
+        db.close();
+        return dummyItem;
+    }
+
+    public List<DummyContent.DummyItem> getAllDummyItemArchive() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(Constant.Database.SQL_SELECT_ARCHIVE, null);
+        List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
+        cursor.close();
+        db.close();
+        return dummyItemList;
+    }
+
+    // Insert dummy item to archive table
+    public void addDummyItemIntoArchive(DummyContent.DummyItem dummyItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = Lib.DummyItem2ContentValues(dummyItem);
+
+        db.beginTransaction();
+        try{
+            db.insert(Constant.FeedEntry.TABLE_NAME_1,null,values);
+            db.setTransactionSuccessful();
+        }finally {
+            db.endTransaction();
+        }
+    }
+    // Delete dummy item from archive table
+    public boolean deleteFromArchive(DummyContent.DummyItem dummyItem) {
+        return deleteByIdFromArchive(dummyItem.id);
+    }
+
+    public boolean deleteByIdFromArchive(String id){
+        boolean success = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            success = db.delete(Constant.FeedEntry.TABLE_NAME_1, Constant.FeedEntry._ID + " = ?", new String[]{id}) > 0;
+            db.setTransactionSuccessful();
+        }finally {
+            db.endTransaction();
+            db.close();
+        }
+        return success;
+    }
+
+    // TODO: Test function moveAllContent2Archive
+    public void moveAllContent2Archive(DummyContent.DummyItem dummyItem){
+
+        addDummyItemIntoArchive(dummyItem);
+        delete(dummyItem);
+
+    }
+
+    // TODO: Test function moveArchive2AllContent
+    public void moveArchive2AllContent(DummyContent.DummyItem dummyItem){
+        addDummyItem(dummyItem);
+        deleteFromArchive(dummyItem);
+    }
+
     
 }
