@@ -16,6 +16,7 @@ import com.rstudio.assmb.latie.contentfragment.ItemModelFragment.OnListFragmentI
 import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent.DummyItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +26,15 @@ import java.util.List;
  */
 public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModelRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private List<DummyItem> mOriginData;
+    private List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final Context mContext;
     private boolean mArchivingMode;
 
     public ItemModelRecyclerViewAdapter(Context context, List<DummyItem> items, OnListFragmentInteractionListener listener, boolean archiving) {
+        mOriginData = new ArrayList<>();
+        mOriginData.addAll(items);
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -123,6 +127,22 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
                 });
         Dialog dia = builder.create();
         dia.show();
+    }
+
+    public void filter(String s) {
+        if (s.length() == 0) {
+            mValues.clear();
+            mValues.addAll(mOriginData);
+        } else {
+            mValues.clear();
+            for (DummyItem item:
+                 mOriginData) {
+                if (item.contains(s)) {
+                    mValues.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     @Override

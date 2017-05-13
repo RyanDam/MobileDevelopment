@@ -123,6 +123,15 @@ public class DummyContent {
             return ret;
         }
 
+        public boolean contains(String s) {
+            if (s.length() > 0) {
+                if (content != null && content.contains(s)) return true;
+                if (title != null && title.contains(s)) return true;
+                if (originLink != null && originLink.contains(s)) return true;
+            }
+            return false;
+        }
+
         @Override
         public String toString() {
             return content;

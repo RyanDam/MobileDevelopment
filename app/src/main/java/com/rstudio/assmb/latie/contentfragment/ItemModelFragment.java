@@ -1,12 +1,16 @@
 package com.rstudio.assmb.latie.contentfragment;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +42,9 @@ public class ItemModelFragment extends Fragment {
 
     DummyContent mContent;
 
-    RecyclerView.Adapter mAdapter;
+    ItemModelRecyclerViewAdapter mAdapter;
+
+    SearchView searchView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -86,6 +92,31 @@ public class ItemModelFragment extends Fragment {
             mAdapter = new ItemModelRecyclerViewAdapter(getContext(), mContent.ITEMS, mListener, archivingMode);
             recyclerView.setAdapter(mAdapter);
         }
+
+        searchView = ((SearchView) view.findViewById(R.id.search));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Log.i("ABC", "onQueryTextSubmit: " + query);
+
+                mAdapter.filter(query);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                Log.i("III", "onQueryTextSubmit: " + newText);
+
+                mAdapter.filter(newText);
+
+                return true;
+            }
+        });
+
 
         return view;
     }
