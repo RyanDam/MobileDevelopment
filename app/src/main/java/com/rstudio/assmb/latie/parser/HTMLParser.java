@@ -35,12 +35,21 @@ public class HTMLParser {
         Element content = findNodeContent();
         if (content == null)
             return "";
-        else
-            return content.text();
+        else {
+
+            return "<html>" +
+                    "<head>" +
+                        "<title>" + this.getTitle() + "</title>" +
+                    "</head>" +
+                    "<body>" +
+                    content.html() +
+                    "</body>" +
+                    "</html>";
+        }
     }
 
     private int countParagraph(Element element) {
-        final int thresholdParagraph = 20;
+        final int thresholdParagraph = 30;
 
         Elements paragraphs = element.select("> p");
 
