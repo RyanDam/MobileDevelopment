@@ -24,7 +24,7 @@ public class HTMLParser {
 
     public void setHtmlLink(String url) {
         try {
-            this.htmlDoc = Jsoup.connect("http://en.wikipedia.org/").get();
+            this.htmlDoc = Jsoup.connect(url).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
