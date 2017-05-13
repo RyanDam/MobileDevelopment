@@ -9,13 +9,22 @@ import java.io.IOException;
 
 public class HTMLParser {
     private Document htmlDoc;
+    private Element content;
 
     public HTMLParser() {
         this.htmlDoc = Jsoup.parse("<html> </html>");
+        this.content = null;
     }
 
     public HTMLParser(String htmlStr) {
         this.htmlDoc = Jsoup.parse(htmlStr);
+        this.content = this.findNodeContent();
+    }
+
+    public void setContent() {
+        if (this.content == null)
+            return;
+        this.content = this.findNodeContent();
     }
 
     public String getTitle() {
@@ -32,19 +41,43 @@ public class HTMLParser {
     }
 
     public String getContent() {
-        Element content = findNodeContent();
-        if (content == null)
+        setContent();
+        if (this.content == null)
             return "";
         else {
 
             return "<html>" +
                     "<head>" +
                         "<title>" + this.getTitle() + "</title>" +
+                        "<style> img { width: 100%; height: auto; }  * { color: #202020; } </style>" +
                     "</head>" +
                     "<body>" +
                     content.html() +
                     "</body>" +
                     "</html>";
+        }
+    }
+
+    public String getParagraph() {
+        setContent();
+        if (this.content == null)
+            return "";
+        else {
+            if (this.content.select("p").first() == null)
+                return "";
+            return this.content.select("p").first().text();
+        }
+    }
+
+    public String getImageUrl() {
+        setContent();
+        if (this.content == null)
+            return "";
+        else {
+            Elements images = content.select("img");
+            if (images.first() == null)
+                return "";
+            return images.first().attr("src");
         }
     }
 
