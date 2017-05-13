@@ -1,4 +1,4 @@
-package com.rstudio.assmb.latie.contentfragment.dummy.model;
+package com.rstudio.assmb.latie.contentfragment.dummy;
 
 import android.content.ContentValues;
 import android.content.Context;
