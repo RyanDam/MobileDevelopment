@@ -1,5 +1,9 @@
 package com.rstudio.assmb.latie.contentfragment;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +13,7 @@ import android.widget.TextView;
 
 import com.rstudio.assmb.latie.R;
 import com.rstudio.assmb.latie.contentfragment.ItemModelFragment.OnListFragmentInteractionListener;
+import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent.DummyItem;
 
 import java.util.List;
@@ -22,10 +27,14 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final Context mContext;
+    private boolean mArchivingMode;
 
-    public ItemModelRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public ItemModelRecyclerViewAdapter(Context context, List<DummyItem> items, OnListFragmentInteractionListener listener, boolean archiving) {
         mValues = items;
         mListener = listener;
+        mContext = context;
+        mArchivingMode = archiving;
     }
 
     @Override
@@ -43,16 +52,14 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
 
         holder.mDateView.setText(holder.mItem.getDateTime() + " " + holder.mItem.originLink);
 
-        if (position % 4 == 0 || position == 0) {
-            holder.mThumbView.setVisibility(View.GONE);
-        } else {
-            holder.mThumbView.setVisibility(View.VISIBLE);
-        }
+//        if (position % 4 == 0 || position == 0) {
+//            holder.mThumbView.setVisibility(View.GONE);
+//        } else {
+//            holder.mThumbView.setVisibility(View.VISIBLE);
+//        }
+
         holder.mContentView.setText(holder.mItem.getSummary());
         holder.mIdView.setText(holder.mItem.title);
-
-
-
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +71,58 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
                 }
             }
         });
+
+        final int posss = position;
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                showDialog(holder.mItem, posss);
+
+                return true;
+            }
+        });
+    }
+
+    public void removeItemAtPosition(int pos) {
+        mValues.remove(pos);
+        notifyItemRemoved(pos);
+    }
+
+    public void showDialog(final DummyItem item, final int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setItems(R.array.article_choice, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // The 'which' argument contains the index position
+                        // of the selected item
+
+                        DatabaseHandler handler = new DatabaseHandler(mContext);
+
+                        switch (which) {
+                            case 0:
+                                if (!mArchivingMode) {
+                                    handler.moveAllContent2Archive(item);
+                                } else {
+                                    handler.moveArchive2AllContent(item);
+                                }
+                                removeItemAtPosition(pos);
+                                break;
+                            case 1:
+                                if (!mArchivingMode) {
+                                    handler.delete(item);
+                                } else {
+                                    handler.deleteFromArchive(item);
+                                }
+                                removeItemAtPosition(pos);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        Dialog dia = builder.create();
+        dia.show();
     }
 
     @Override

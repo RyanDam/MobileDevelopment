@@ -14,7 +14,7 @@
         android:id="@+id/share"
         android:orderInCategory="300"
         android:title="User"
-        android:icon="@drawable/star"
+        android:icon="@drawable/shareico"
         app:showAsAction="ifRoom">
     </item>
 </menu>

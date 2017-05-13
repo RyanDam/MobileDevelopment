@@ -27,9 +27,12 @@ public class ItemModelFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_ARCHIVE = "archiving";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private boolean archivingMode;
 
     RecyclerView recyclerView;
 
@@ -46,10 +49,11 @@ public class ItemModelFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemModelFragment newInstance(int columnCount) {
+    public static ItemModelFragment newInstance(int columnCount, boolean archiving) {
         ItemModelFragment fragment = new ItemModelFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putBoolean(ARG_ARCHIVE, archiving);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +64,7 @@ public class ItemModelFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            archivingMode = getArguments().getBoolean(ARG_ARCHIVE);
         }
     }
 
@@ -78,11 +83,9 @@ public class ItemModelFragment extends Fragment {
 
         if (mContent != null) {
             mContent.initData(getContext());
-            mAdapter = new ItemModelRecyclerViewAdapter(mContent.ITEMS, mListener);
+            mAdapter = new ItemModelRecyclerViewAdapter(getContext(), mContent.ITEMS, mListener, archivingMode);
             recyclerView.setAdapter(mAdapter);
         }
-
-
 
         return view;
     }
@@ -103,6 +106,12 @@ public class ItemModelFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadData();
     }
 
     /**

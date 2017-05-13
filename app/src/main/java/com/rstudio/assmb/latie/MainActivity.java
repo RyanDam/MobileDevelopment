@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAllItemContentFragment = ItemModelFragment.newInstance(1);
-        mStaredItemContentFragment = ItemModelFragment.newInstance(1);
-        mArchiveItemContentFragment = ItemModelFragment.newInstance(1);
+        mAllItemContentFragment = ItemModelFragment.newInstance(1, false);
+        mStaredItemContentFragment = ItemModelFragment.newInstance(1, false);
+        mArchiveItemContentFragment = ItemModelFragment.newInstance(1, true);
 
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.fragment_container, mAllItemContentFragment).commit();
@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     public void receivedContent() {

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 
 import org.w3c.dom.Text;
@@ -26,6 +27,8 @@ public class ContentDetailActivity extends AppCompatActivity {
     private TextView mContent;
     private WebView mWebView;
     private CollapsingToolbarLayout barLayout;
+
+    DatabaseHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class ContentDetailActivity extends AppCompatActivity {
 
         setupItemView();
 
+        handler = new DatabaseHandler(this);
+
     }
 
     @Override
@@ -78,6 +83,8 @@ public class ContentDetailActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
+
         switch (id) {
             case android.R.id.home:
                 finish();
@@ -85,11 +92,17 @@ public class ContentDetailActivity extends AppCompatActivity {
             case R.id.liked:
                 // like article
                 mItem.isLiked = !mItem.isLiked;
+
+                handler.updateLike(mItem, mItem.isLiked);
+
                 supportInvalidateOptionsMenu();
                 break;
             case R.id.like:
                 // unlike article
                 mItem.isLiked = !mItem.isLiked;
+
+                handler.updateLike(mItem, mItem.isLiked);
+
                 supportInvalidateOptionsMenu();
                 break;
             case R.id.share:

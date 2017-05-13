@@ -89,7 +89,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = Constant.Database.SQL_SELECT + " WHERE " + Constant.FeedEntry._ID + " = " + id;
         Cursor cursor = db.rawQuery(sql, null);
-        DummyContent.DummyItem dummyItem = Lib.cursor2ListDummyItem(cursor).remove(0);
+        List<DummyContent.DummyItem> a = Lib.cursor2ListDummyItem(cursor);
+
+        DummyContent.DummyItem dummyItem = a.remove(0);
         cursor.close();
         db.close();
         return dummyItem;
@@ -149,7 +151,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // TODO: updating like of DummyItem
     public boolean updateLike(DummyContent.DummyItem dummyItem){
-        DummyContent.DummyItem newDI = new DummyContent.DummyItem(dummyItem.id, dummyItem.title, dummyItem.content, dummyItem.originLink, !dummyItem.isLiked, dummyItem.time);
+        return updateLike(dummyItem, !dummyItem.isLiked);
+    }
+
+    public boolean updateLike(DummyContent.DummyItem dummyItem, boolean liked){
+        DummyContent.DummyItem newDI = new DummyContent.DummyItem(dummyItem.id, dummyItem.title, dummyItem.content, dummyItem.originLink, liked, dummyItem.time);
         return update(dummyItem, newDI);
     }
 

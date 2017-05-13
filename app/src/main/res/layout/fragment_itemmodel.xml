@@ -10,6 +10,7 @@
         android:id="@+id/thumbnail_holder"
         android:layout_width="match_parent"
         android:layout_height="148dp"
+        android:visibility="gone"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp">
 
