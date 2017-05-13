@@ -5,8 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 
+import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,28 +27,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
          */
         public static ContentValues DummyItem2ContentValues(DummyContent.DummyItem dummyItem){
             ContentValues values = new ContentValues();
-
             values.put(Constant.FeedEntry.KEY_TITLE, dummyItem.title);
             values.put(Constant.FeedEntry.KEY_TIME, dummyItem.time);
             values.put(Constant.FeedEntry.KEY_CONTENT, dummyItem.content);
             values.put(Constant.FeedEntry.KEY_LINK, dummyItem.originLink);
             values.put(Constant.FeedEntry.KEY_ISLIKED, dummyItem.isLiked);
-
             return values;
         }
-
-
-
-        /**
-         * Getting values from cursor
-         * @param cursor
-         * @return
-         */
         public static List<DummyContent.DummyItem> cursor2ListDummyItem(Cursor cursor){
             List<DummyContent.DummyItem> dummyItemList = null;
 
             if (cursor.moveToFirst()) {
-                dummyItemList = new ArrayList<>();
+                dummyItemList = new ArrayList<DummyContent.DummyItem>();
                 do {
                     String id = cursor.getString(0);
                     String title = cursor.getString(1);
@@ -72,18 +62,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Constant.Database.SQL_CREATE_ENTRIES);
+        db.execSQL(Constant.Database.SQL_CREATE_ARCHIVE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(Constant.Database.SQL_DROP_ENTRIES);
+        db.execSQL(Constant.Database.SQL_DROP_ARCHIVE);
         onCreate(db);
     }
 
-    /**
-     * Inserting DummyItem to database
-     * @param dummyItem
-     */
     public void addDummyItem(DummyContent.DummyItem dummyItem) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = Lib.DummyItem2ContentValues(dummyItem);
@@ -97,11 +85,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Getting DummyItem By its id
-     * @param id
-     * @return
-     */
     public DummyContent.DummyItem getDummyItemById(String id){
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = Constant.Database.SQL_SELECT + " WHERE " + Constant.FeedEntry._ID + " = " + id;
@@ -112,28 +95,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return dummyItem;
     }
 
-    /**
-     * Getting all DummyItem
-     * @return
-     */
     public List<DummyContent.DummyItem> getAllDummyItem() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(Constant.Database.SQL_SELECT, null);
         List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
         cursor.close();
         db.close();
-
-        if (dummyItemList == null) {
+        if(dummyItemList == null){
             return new ArrayList<>();
-        } else {
+        }
+        else {
             return dummyItemList;
         }
     }
 
-    /**
-     * Getting all DummyItem when isLiked is true
-     * @return
-     */
+
     public List<DummyContent.DummyItem> getAllDummyItemIsLiked(){
         String sql = Constant.Database.SQL_SELECT + " WHERE " + Constant.FeedEntry.KEY_ISLIKED + " = 1";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -141,20 +117,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
         cursor.close();
         db.close();
-
-        if (dummyItemList == null) {
+        if(dummyItemList == null){
             return new ArrayList<>();
-        } else {
+        }
+        else {
             return dummyItemList;
         }
     }
 
-    /**
-     * Updating values of DummyItem
-     * @param oldDI
-     * @param newDI
-     * @return
-     */
     public boolean update(DummyContent.DummyItem oldDI, DummyContent.DummyItem newDI) {
 
         boolean success = false;
@@ -177,30 +147,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return success;
     }
 
-    /**
-     * Updating isLiked
-     * @param dummyItem
-     * @return
-     */
+    // TODO: updating like of DummyItem
     public boolean updateLike(DummyContent.DummyItem dummyItem){
         DummyContent.DummyItem newDI = new DummyContent.DummyItem(dummyItem.id, dummyItem.title, dummyItem.content, dummyItem.originLink, !dummyItem.isLiked, dummyItem.time);
         return update(dummyItem, newDI);
     }
 
-    /**
-     * Deleting DummyItem in database by DunmmyItem
-     * @param dummyItem
-     * @return
-     */
     public boolean delete(DummyContent.DummyItem dummyItem) {
         return deleteById(dummyItem.id);
     }
 
-    /**
-     * Deleting DummyItem in database by Id of DunmmyItem
-     * @param id
-     * @return
-     */
     public boolean deleteById(String id){
         boolean success = false;
 
@@ -214,5 +170,77 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.close();
         }
         return success;
+    }
+
+    // TODO: AllContent -> Archive || Archive -> AllContent
+    public DummyContent.DummyItem getDummyItemByIdArchive(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = Constant.Database.SQL_SELECT_ARCHIVE + " WHERE " + Constant.FeedEntry._ID + " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+        DummyContent.DummyItem dummyItem = Lib.cursor2ListDummyItem(cursor).remove(0);
+        cursor.close();
+        db.close();
+        return dummyItem;
+    }
+
+    public List<DummyContent.DummyItem> getAllDummyItemArchive() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(Constant.Database.SQL_SELECT_ARCHIVE, null);
+        List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
+        cursor.close();
+        db.close();
+        if(dummyItemList == null){
+            return new ArrayList<>();
+        }
+        else {
+            return dummyItemList;
+        }
+    }
+
+    // Insert dummy item to archive table
+    public void addDummyItemIntoArchive(DummyContent.DummyItem dummyItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = Lib.DummyItem2ContentValues(dummyItem);
+
+        db.beginTransaction();
+        try{
+            db.insert(Constant.FeedEntry.TABLE_NAME_1,null,values);
+            db.setTransactionSuccessful();
+        }finally {
+            db.endTransaction();
+        }
+    }
+    // Delete dummy item from archive table
+    public boolean deleteFromArchive(DummyContent.DummyItem dummyItem) {
+        return deleteByIdFromArchive(dummyItem.id);
+    }
+
+    public boolean deleteByIdFromArchive(String id){
+        boolean success = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            success = db.delete(Constant.FeedEntry.TABLE_NAME_1, Constant.FeedEntry._ID + " = ?", new String[]{id}) > 0;
+            db.setTransactionSuccessful();
+        }finally {
+            db.endTransaction();
+            db.close();
+        }
+        return success;
+    }
+
+    // TODO: Test function moveAllContent2Archive
+    public void moveAllContent2Archive(DummyContent.DummyItem dummyItem){
+
+        addDummyItemIntoArchive(dummyItem);
+        delete(dummyItem);
+
+    }
+
+    // TODO: Test function moveArchive2AllContent
+    public void moveArchive2AllContent(DummyContent.DummyItem dummyItem){
+        addDummyItem(dummyItem);
+        deleteFromArchive(dummyItem);
     }
 }
