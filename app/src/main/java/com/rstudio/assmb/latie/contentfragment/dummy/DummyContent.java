@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.rstudio.assmb.latie.parser.HTMLParser;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +100,11 @@ public class DummyContent {
                     , bundle.getString("ORIGIN_LINK")
                     , bundle.getBoolean("LIKED")
                     , bundle.getLong("TIME"));
+        }
+
+        public String getSummary() {
+            HTMLParser parser = new HTMLParser(this.content);
+            return parser.getParagraph();
         }
 
         public CharSequence getDateTime() {

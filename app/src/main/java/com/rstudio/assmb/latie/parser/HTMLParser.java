@@ -52,7 +52,9 @@ public class HTMLParser {
                         "<style> img { width: 100%; height: auto; }  * { color: #202020; } </style>" +
                     "</head>" +
                     "<body>" +
+                    "<div>" +
                     content.html() +
+                    "</div>" +
                     "</body>" +
                     "</html>";
         }

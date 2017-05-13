@@ -48,7 +48,7 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
         } else {
             holder.mThumbView.setVisibility(View.VISIBLE);
         }
-        holder.mContentView.setText(holder.mItem.content);
+        holder.mContentView.setText(holder.mItem.getSummary());
         holder.mIdView.setText(holder.mItem.title);
 
 
