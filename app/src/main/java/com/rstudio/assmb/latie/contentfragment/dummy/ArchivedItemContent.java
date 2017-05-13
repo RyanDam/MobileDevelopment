@@ -16,7 +16,7 @@ public class ArchivedItemContent extends DummyContent {
         ITEM_MAP.clear();
 
         DatabaseHandler handler = new DatabaseHandler(context);
-        List<DummyItem> list = handler.getAllDummyItem();
+        List<DummyItem> list = handler.getAllDummyItemArchive();
         Log.d("LENGTH",String.valueOf(list.size()));
         for (int i = list.size(); i > 1; i--) {
             addItem(handler.getDummyItemById(String.valueOf(i)));
