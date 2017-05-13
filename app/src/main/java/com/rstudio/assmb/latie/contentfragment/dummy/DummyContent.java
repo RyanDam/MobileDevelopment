@@ -1,6 +1,8 @@
 package com.rstudio.assmb.latie.contentfragment.dummy;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -16,32 +18,41 @@ import java.util.Map;
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class DummyContent {
+    private String TAG = "MainActivity";
 
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public ArrayList<DummyItem> ITEMS;
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public Map<String, DummyItem> ITEM_MAP;
 
-    private static final int COUNT = 25;
+    //private static final int COUNT = 25;
 
-    static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
+    public DummyContent() {
+        ITEMS = new ArrayList<DummyItem>();
+        ITEM_MAP = new HashMap<String, DummyItem>();
+    }
+
+    public void initData(Context context) {
+        ITEMS.clear();
+        DatabaseHandler handler = new DatabaseHandler(context);
+        List<DummyItem> list = handler.getAllDummyItem();
+        Log.d("LENGTH",String.valueOf(list.size()));
+        for (int i = list.size(); i > 1; i--) {
+            addItem(handler.getDummyItemById(String.valueOf(i)));
         }
     }
 
-    private static void addItem(DummyItem item) {
+    protected void addItem(DummyItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(int position) {
+    protected DummyItem createDummyItem(int position) {
         Date date = new Date();
         return new DummyItem(String.valueOf(position)
                 , "Item " + position
@@ -51,7 +62,7 @@ public class DummyContent {
                 , date.getTime());
     }
 
-    private static String makeDetails(int position) {
+    protected String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Item: ").append(position);
         for (int i = 0; i < position; i++) {

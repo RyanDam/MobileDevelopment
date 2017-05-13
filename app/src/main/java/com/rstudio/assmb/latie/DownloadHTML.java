@@ -14,7 +14,9 @@ import com.rstudio.assmb.latie.parser.HTMLParser;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by admin on 5/7/17.
@@ -23,11 +25,11 @@ import java.util.Date;
 public class DownloadHTML extends AsyncTask <String, Void , String> {
     private static final String LOG_TAG = "HAHAHAHA";
     Context context;
-    private String returnStr;
+    DatabaseHandler handler;
     private String url;
 
-    public DownloadHTML( Context context,String url){
-
+    public DownloadHTML( Context context,String url, DatabaseHandler handler){
+        this.handler = handler;
         this.context = context;
         this.url = url;
     }
@@ -63,13 +65,11 @@ public class DownloadHTML extends AsyncTask <String, Void , String> {
         parser.getContent();
         Date date = new Date();
         long dateTime = Long.valueOf(date.getTime());
-        DummyContent.DummyItem newItem = new DummyContent.DummyItem("26",parser.getTitle(),parser.getContent(),url,false,dateTime);
-        DatabaseHandler dbHandler = new DatabaseHandler(context);
-        dbHandler.addDummyItem(newItem);
-        DummyContent.DummyItem  data = dbHandler.getDummyItemById("25");
+        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1",parser.getTitle(),parser.getContent(),url,false,dateTime);
+        handler.addDummyItem(newItem);
 
-
-        Log.d(LOG_TAG,"HMTL HERE"+data.content);
+        MainActivity acc  = ((MainActivity) context);
+        acc.reloadData();
     }
 }
 

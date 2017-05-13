@@ -48,6 +48,11 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
         } else {
             holder.mThumbView.setVisibility(View.VISIBLE);
         }
+        holder.mContentView.setText(holder.mItem.content);
+        holder.mIdView.setText(holder.mItem.title);
+
+
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

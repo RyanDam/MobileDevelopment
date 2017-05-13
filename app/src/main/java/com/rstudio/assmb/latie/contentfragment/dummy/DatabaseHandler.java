@@ -1,12 +1,12 @@
-package com.rstudio.assmb.latie.contentfragment.dummy.model;
+package com.rstudio.assmb.latie.contentfragment.dummy;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +122,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
         cursor.close();
         db.close();
-        return dummyItemList;
+
+        if (dummyItemList == null) {
+            return new ArrayList<>();
+        } else {
+            return dummyItemList;
+        }
     }
 
     /**
@@ -136,7 +141,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         List<DummyContent.DummyItem> dummyItemList = Lib.cursor2ListDummyItem(cursor);
         cursor.close();
         db.close();
-        return dummyItemList;
+
+        if (dummyItemList == null) {
+            return new ArrayList<>();
+        } else {
+            return dummyItemList;
+        }
     }
 
     /**

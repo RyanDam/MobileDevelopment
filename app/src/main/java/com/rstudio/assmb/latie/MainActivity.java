@@ -1,50 +1,31 @@
 package com.rstudio.assmb.latie;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.os.AsyncTaskCompat;
+
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 import com.rstudio.assmb.latie.contentfragment.ItemModelFragment;
+import com.rstudio.assmb.latie.contentfragment.dummy.AllItemContent;
+import com.rstudio.assmb.latie.contentfragment.dummy.ArchivedItemContent;
+import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
-import com.rstudio.assmb.latie.parser.HTMLParser;
+import com.rstudio.assmb.latie.contentfragment.dummy.StaredItemContent;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity implements ItemModelFragment.OnListFragmentInteractionListener {
 
@@ -83,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
         setContentView(R.layout.activity_main);
 
         mAllItemContentFragment = ItemModelFragment.newInstance(1);
-        mStaredItemContentFragment = ItemModelFragment.newInstance(2);
-        mArchiveItemContentFragment = ItemModelFragment.newInstance(3);
+        mStaredItemContentFragment = ItemModelFragment.newInstance(1);
+        mArchiveItemContentFragment = ItemModelFragment.newInstance(1);
 
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.fragment_container, mAllItemContentFragment).commit();
@@ -92,6 +73,17 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
         mNavigation = ((BottomNavigationView) findViewById(R.id.navigation));
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         receivedContent();
+
+
+        mArchiveItemContentFragment.setContent(new ArchivedItemContent());
+        mAllItemContentFragment.setContent(new AllItemContent());
+        mStaredItemContentFragment.setContent(new StaredItemContent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
 
     }
 
@@ -108,15 +100,27 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                 Toast.makeText(this, "You received text!", Toast.LENGTH_SHORT).show();
                 String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
                 if(receivedText != null) {
+                    DatabaseHandler dbHandler = new DatabaseHandler(this);
                     String abc="";
                     if(URLUtil.isValidUrl(receivedText)) {
-                        DownloadHTML handle = new DownloadHTML(this,receivedText);
+
+                        DownloadHTML handle = new DownloadHTML(this,receivedText,dbHandler);
                         handle.execute(receivedText);
-                        Log.d("HEHEHE",abc);
+
+
+
                         Toast.makeText(this, "URL", Toast.LENGTH_SHORT).show();
 
                     }else {
-                        Toast.makeText(this, receivedText, Toast.LENGTH_SHORT).show();
+
+                        Date date = new Date();
+                        long dateTime = Long.valueOf(date.getTime());
+                        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,"",false,dateTime);
+                        dbHandler.addDummyItem(newItem);
+
+                        Toast.makeText(this, "Text", Toast.LENGTH_SHORT).show();
+
+                        reloadData();
                     }
 
 
@@ -154,7 +158,13 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
         startActivity(intent);
     }
 
+    public void reloadData(){
 
+        mAllItemContentFragment.reloadData();
+        mArchiveItemContentFragment.reloadData();
+        mStaredItemContentFragment.reloadData();
+
+    }
 
 }
 

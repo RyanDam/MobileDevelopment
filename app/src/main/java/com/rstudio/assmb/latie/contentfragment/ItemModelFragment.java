@@ -31,6 +31,12 @@ public class ItemModelFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
+    RecyclerView recyclerView;
+
+    DummyContent mContent;
+
+    RecyclerView.Adapter mAdapter;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -63,13 +69,20 @@ public class ItemModelFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_itemmodel_list, container, false);
 
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(mColumnCount, StaggeredGridLayoutManager.VERTICAL));
         }
-        recyclerView.setAdapter(new ItemModelRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+        if (mContent != null) {
+            mContent.initData(getContext());
+            mAdapter = new ItemModelRecyclerViewAdapter(mContent.ITEMS, mListener);
+            recyclerView.setAdapter(mAdapter);
+        }
+
+
 
         return view;
     }
@@ -104,5 +117,27 @@ public class ItemModelFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(DummyItem item);
+    }
+
+    public void setContent(DummyContent content) {
+        mContent = content;
+
+//        if (mContent != null) {
+//            recyclerView.setAdapter(new ItemModelRecyclerViewAdapter(mContent.ITEMS, mListener));
+//        }
+    }
+
+    public void reloadData() {
+
+        if (recyclerView != null) {
+
+            if (mContent != null) {
+                mContent.initData(getContext());
+            }
+
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }
     }
 }

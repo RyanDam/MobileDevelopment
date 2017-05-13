@@ -90,7 +90,10 @@ public class ContentDetailActivity extends AppCompatActivity {
             case R.id.share:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/html");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mItem.content);
+                String url = "http://www.google.com.vn";
+                //sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mItem.content);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
+
                 startActivity(Intent.createChooser(sharingIntent, "Share using"));
                 break;
         }
