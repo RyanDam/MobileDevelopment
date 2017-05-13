@@ -114,12 +114,5 @@ public class ContentDetailActivity extends AppCompatActivity {
 
         mWebView.loadDataWithBaseURL("", mItem.content, "text/html", "UTF-8", "");
 
-        new Utils.ReadFileASync(this, new Utils.OnReadStringCallBack() {
-            @Override
-            public void onReadSuccess(String ret) {
-                mWebView.loadDataWithBaseURL("", ret, "text/html", "UTF-8", "");
-            }
-        }).execute(R.raw.temp);
-
     }
 }
