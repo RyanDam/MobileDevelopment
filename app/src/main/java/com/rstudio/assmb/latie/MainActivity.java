@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
 import android.widget.Toast;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                 if(receivedText != null) {
                     DatabaseHandler dbHandler = new DatabaseHandler(this);
                     String abc="";
-                    if(URLUtil.isValidUrl(receivedText)) {
+                    if(Patterns.WEB_URL.matcher(receivedText).matches()) {
 
                         DownloadHTML handle = new DownloadHTML(this,receivedText,dbHandler);
                         handle.execute(receivedText);
