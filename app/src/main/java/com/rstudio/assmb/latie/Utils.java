@@ -1,5 +1,8 @@
 package com.rstudio.assmb.latie;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -18,6 +21,55 @@ import java.io.InputStreamReader;
  */
 
 public class Utils {
+
+    public interface OnReadStringCallBack {
+        void onReadSuccess(String ret);
+    }
+
+    public static class ReadFileASync extends AsyncTask<Integer, Void, String> {
+
+        private Context mContext;
+        private OnReadStringCallBack mCb;
+
+        public ReadFileASync(Context context, OnReadStringCallBack cb) {
+            this.mContext = context;
+            this.mCb = cb;
+        }
+
+        @Override
+        protected String doInBackground(Integer... ints) {
+            int id = ints[0];
+
+            String ret;
+
+            try {
+                Resources res = mContext.getResources();
+                InputStream in_s = res.openRawResource(id);
+
+                byte[] b = new byte[in_s.available()];
+                in_s.read(b);
+
+                ret = new String(b);
+
+                in_s.close();
+
+            } catch (Exception e) {
+
+                ret = e.getMessage();
+            }
+
+            return ret;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (mCb != null) {
+                mCb.onReadSuccess(s);
+            }
+        }
+    }
 
     public static String connect(String url) {
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
@@ -23,6 +24,7 @@ public class ContentDetailActivity extends AppCompatActivity {
     private TextView mIdView;
     private TextView mDateView;
     private TextView mContent;
+    private WebView mWebView;
     private CollapsingToolbarLayout barLayout;
 
     @Override
@@ -47,6 +49,9 @@ public class ContentDetailActivity extends AppCompatActivity {
         mIdView = ((TextView) findViewById(R.id.id));
         mDateView = ((TextView) findViewById(R.id.date));
         mContent = ((TextView) findViewById(R.id.content));
+        mWebView = ((WebView) findViewById(R.id.webview));
+
+        mWebView.getSettings().setJavaScriptEnabled(true);
 
         Bundle itemBundle = getIntent().getBundleExtra("ITEM");
         mItem = new DummyContent.DummyItem(itemBundle);
@@ -106,5 +111,15 @@ public class ContentDetailActivity extends AppCompatActivity {
         mIdView.setText(mItem.title);
         mDateView.setText(mItem.getDateTime() + " " + mItem.originLink);
         mContent.setText(mItem.content);
+
+        mWebView.loadDataWithBaseURL("", mItem.content, "text/html", "UTF-8", "");
+
+        new Utils.ReadFileASync(this, new Utils.OnReadStringCallBack() {
+            @Override
+            public void onReadSuccess(String ret) {
+                mWebView.loadDataWithBaseURL("", ret, "text/html", "UTF-8", "");
+            }
+        }).execute(R.raw.temp);
+
     }
 }
