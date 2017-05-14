@@ -66,7 +66,7 @@ public class ItemModelFragment extends Fragment {
 
     FloatingActionButton addButton;
 
-    ImageView feedMe;
+    View feedMe;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -164,7 +164,7 @@ public class ItemModelFragment extends Fragment {
             }
         }
 
-        feedMe = ((ImageView) view.findViewById(R.id.feed_please));
+        feedMe = view.findViewById(R.id.feed_please);
 
         if (mContent.ITEMS.size() > 0) {
             feedMe.setVisibility(View.GONE);

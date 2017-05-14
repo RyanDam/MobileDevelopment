@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,9 +91,18 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
     }
 
     public void removeItemAtPosition(int pos) {
-        mValues.remove(pos);
-        notifyItemRemoved(pos);
-        mContext.refreshFeed();
+
+        Log.i("ABC", "removeItemAtPosition: " + pos);
+
+        if (mValues.size() > pos) {
+            mValues.remove(pos);
+            notifyItemRemoved(pos);
+            mContext.refreshFeed();
+        } else if (pos == 1 && mValues.size() == 1) {
+            mValues.clear();
+            notifyDataSetChanged();
+            mContext.refreshFeed();
+        }
     }
 
     public void showDialog(final DummyItem item, final int pos) {
