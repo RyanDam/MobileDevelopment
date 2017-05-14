@@ -114,15 +114,14 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
                         Date date = new Date();
                         long dateTime = Long.valueOf(date.getTime());
-                        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,"",false,dateTime);
+                        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,null,false,dateTime);
                         dbHandler.addDummyItem(newItem);
 
                         Toast.makeText(this, "Text", Toast.LENGTH_SHORT).show();
 
                         reloadData();
                     }
-
-
+                    
                 }
             }
         }else if(receivedAction.equals(Intent.ACTION_MAIN)){
