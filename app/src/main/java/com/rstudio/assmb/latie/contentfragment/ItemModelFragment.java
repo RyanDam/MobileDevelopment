@@ -4,21 +4,36 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.rstudio.assmb.latie.DownloadHTML;
 import com.rstudio.assmb.latie.R;
+import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent.DummyItem;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +60,8 @@ public class ItemModelFragment extends Fragment {
     ItemModelRecyclerViewAdapter mAdapter;
 
     SearchView searchView;
+
+    FloatingActionButton addButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -93,6 +110,8 @@ public class ItemModelFragment extends Fragment {
             recyclerView.setAdapter(mAdapter);
         }
 
+        addButton = ((FloatingActionButton) view.findViewById(R.id.plusButton));
+
         searchView = ((SearchView) view.findViewById(R.id.search));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -117,6 +136,22 @@ public class ItemModelFragment extends Fragment {
             }
         });
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0)
+                    addButton.hide();
+                else if (dy < 0)
+                    addButton.show();
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickAddButton();
+            }
+        });
 
         return view;
     }
@@ -143,6 +178,68 @@ public class ItemModelFragment extends Fragment {
     public void onResume() {
         super.onResume();
         reloadData();
+    }
+
+    public void onClickAddButton() {
+        boolean wrapInScrollView = false;
+        new MaterialDialog.Builder(getContext())
+                .title("Add new article")
+                .customView(R.layout.add_new_layout, wrapInScrollView)
+                .positiveText("Add")
+                .negativeText("Cancel")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        EditText title = ((EditText) dialog.findViewById(R.id.title_add));
+                        EditText content = ((EditText) dialog.findViewById(R.id.content_add));
+                        final TextView waring = ((TextView) dialog.findViewById(R.id.error_plus));
+
+                        String contentText = content.getText().toString();
+
+                        if (contentText.length() > 0) {
+
+                            DatabaseHandler dbHandler = new DatabaseHandler(dialog.getContext());
+
+                            if (Patterns.WEB_URL.matcher(contentText).matches()) {
+
+                                DownloadHTML handle = new DownloadHTML(dialog.getContext(), contentText, dbHandler);
+                                handle.execute(contentText);
+
+                                reloadData();
+
+                            } else {
+
+                                Date date = new Date();
+                                long dateTime = Long.valueOf(date.getTime());
+                                DummyItem newItem = new DummyItem("1", title.getText().toString(), contentText, "", false, dateTime);
+                                dbHandler.addDummyItem(newItem);
+
+                                reloadData();
+                            }
+
+                        } else {
+                            waring.setVisibility(View.VISIBLE);
+                        }
+
+                        content.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                                waring.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+
+                            }
+                        });
+                    }
+                })
+                .show();
     }
 
     /**

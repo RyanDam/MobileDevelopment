@@ -36,5 +36,8 @@ Knowledge and belief are like oil and water. They don’t mix. Knowledge doesn�
 
 Still, both known things and believed things exist. The former exist “out there” and the latter “in our minds” and only there. But they are no less real for that.
     </string>
+    <string name="add_dialog_title">Article Title</string>
+    <string name="add_dialog_content">Content</string>
+    <string name="fill_in_content_warning">Please fill in content</string>
 
 </resources>

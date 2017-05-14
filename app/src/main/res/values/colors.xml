@@ -9,4 +9,5 @@
 
     <color name="navigationBarBackground">#262626</color>
     <color name="navigationItemTint">#ffffff</color>
+    <color name="error_text_color">#ef5350</color>
 </resources>
