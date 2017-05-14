@@ -29,10 +29,10 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
     private List<DummyItem> mOriginData;
     private List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
-    private final Context mContext;
+    private final ItemModelFragment mContext;
     private boolean mArchivingMode;
 
-    public ItemModelRecyclerViewAdapter(Context context, List<DummyItem> items, OnListFragmentInteractionListener listener, boolean archiving) {
+    public ItemModelRecyclerViewAdapter(ItemModelFragment context, List<DummyItem> items, OnListFragmentInteractionListener listener, boolean archiving) {
         mOriginData = new ArrayList<>();
         mOriginData.addAll(items);
         mValues = items;
@@ -92,16 +92,17 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
     public void removeItemAtPosition(int pos) {
         mValues.remove(pos);
         notifyItemRemoved(pos);
+        mContext.refreshFeed();
     }
 
     public void showDialog(final DummyItem item, final int pos) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext.getContext());
         builder.setItems(R.array.article_choice, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // The 'which' argument contains the index position
                         // of the selected item
 
-                        DatabaseHandler handler = new DatabaseHandler(mContext);
+                        DatabaseHandler handler = new DatabaseHandler(mContext.getContext());
 
                         switch (which) {
                             case 0:
@@ -143,6 +144,7 @@ public class ItemModelRecyclerViewAdapter extends RecyclerView.Adapter<ItemModel
             }
         }
         notifyDataSetChanged();
+        mContext.refreshFeed();
     }
 
     @Override

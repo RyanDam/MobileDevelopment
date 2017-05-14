@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,8 @@ public class ItemModelFragment extends Fragment {
     SearchView searchView;
 
     FloatingActionButton addButton;
+
+    ImageView feedMe;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -108,7 +111,7 @@ public class ItemModelFragment extends Fragment {
 
         if (mContent != null) {
             mContent.initData(getContext());
-            mAdapter = new ItemModelRecyclerViewAdapter(getContext(), mContent.ITEMS, mListener, archivingMode);
+            mAdapter = new ItemModelRecyclerViewAdapter(this, mContent.ITEMS, mListener, archivingMode);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -160,7 +163,22 @@ public class ItemModelFragment extends Fragment {
                 addButton.setVisibility(View.GONE);
             }
         }
+
+        feedMe = ((ImageView) view.findViewById(R.id.feed_please));
+
+        if (mContent.ITEMS.size() > 0) {
+            feedMe.setVisibility(View.GONE);
+        }
+
         return view;
+    }
+
+    public void refreshFeed() {
+        if (mContent.ITEMS.size() > 0) {
+            feedMe.setVisibility(View.GONE);
+        } else {
+            feedMe.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -306,6 +324,7 @@ public class ItemModelFragment extends Fragment {
 
             if (mAdapter != null) {
                 mAdapter.notifyDataSetChanged();
+                refreshFeed();
             }
         }
     }
