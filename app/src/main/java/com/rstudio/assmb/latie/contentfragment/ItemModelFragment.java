@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.rstudio.assmb.latie.DownloadHTML;
 import com.rstudio.assmb.latie.R;
+import com.rstudio.assmb.latie.contentfragment.dummy.AllItemContent;
 import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent.DummyItem;
@@ -137,23 +138,28 @@ public class ItemModelFragment extends Fragment {
             }
         });
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                if (dy > 0)
-                    addButton.hide();
-                else if (dy < 0)
-                    addButton.show();
-            }
-        });
+        if (mContent != null) {
+            if (mContent instanceof AllItemContent) {
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                        if (dy > 0)
+                            addButton.hide();
+                        else if (dy < 0)
+                            addButton.show();
+                    }
+                });
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickAddButton();
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClickAddButton();
+                    }
+                });
+            } else {
+                addButton.setVisibility(View.GONE);
             }
-        });
-
+        }
         return view;
     }
 
