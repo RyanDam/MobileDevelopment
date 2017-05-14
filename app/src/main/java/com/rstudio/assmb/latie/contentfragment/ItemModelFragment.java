@@ -3,16 +3,19 @@ package com.rstudio.assmb.latie.contentfragment;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
@@ -24,8 +27,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.rstudio.assmb.latie.DownloadHTML;
 import com.rstudio.assmb.latie.R;
 import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
@@ -181,65 +182,90 @@ public class ItemModelFragment extends Fragment {
     }
 
     public void onClickAddButton() {
-        boolean wrapInScrollView = false;
-        new MaterialDialog.Builder(getContext())
-                .title("Add new article")
-                .customView(R.layout.add_new_layout, wrapInScrollView)
-                .positiveText("Add")
-                .negativeText("Cancel")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        EditText title = ((EditText) dialog.findViewById(R.id.title_add));
-                        EditText content = ((EditText) dialog.findViewById(R.id.content_add));
-                        final TextView waring = ((TextView) dialog.findViewById(R.id.error_plus));
 
-                        String contentText = content.getText().toString();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        // Get the layout inflater
+        LayoutInflater inflater = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the
+        // dialog layout
+        builder.setTitle("Add new article");
+        builder.setCancelable(true);
 
-                        if (contentText.length() > 0) {
+        final View v = inflater.inflate(R.layout.add_new_layout, null);
 
-                            DatabaseHandler dbHandler = new DatabaseHandler(dialog.getContext());
+        builder.setView(v)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            EditText title = ((EditText) v.findViewById(R.id.title_add));
+                            EditText content = ((EditText) v.findViewById(R.id.content_add));
+                            final TextView waring = ((TextView) v.findViewById(R.id.error_plus));
 
-                            if (Patterns.WEB_URL.matcher(contentText).matches()) {
+                            String contentText = content.getText().toString();
 
-                                DownloadHTML handle = new DownloadHTML(dialog.getContext(), contentText, dbHandler);
-                                handle.execute(contentText);
+                            if (contentText.length() > 0) {
 
-                                reloadData();
+                                DatabaseHandler dbHandler = new DatabaseHandler(getContext());
+
+                                if (Patterns.WEB_URL.matcher(contentText).matches()) {
+
+                                    DownloadHTML handle = new DownloadHTML(getContext(), contentText, dbHandler);
+                                    handle.execute(contentText);
+
+                                    reloadData();
+
+                                } else {
+
+                                    Date date = new Date();
+                                    long dateTime = Long.valueOf(date.getTime());
+                                    DummyItem newItem = new DummyItem("1", title.getText().toString(), contentText, "", false, dateTime);
+                                    dbHandler.addDummyItem(newItem);
+
+                                    reloadData();
+                                }
 
                             } else {
+                                waring.setVisibility(View.VISIBLE);
 
-                                Date date = new Date();
-                                long dateTime = Long.valueOf(date.getTime());
-                                DummyItem newItem = new DummyItem("1", title.getText().toString(), contentText, "", false, dateTime);
-                                dbHandler.addDummyItem(newItem);
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Alert")
+                                        .setMessage("Please fill in content")
+                                        .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .show();
 
-                                reloadData();
                             }
 
-                        } else {
-                            waring.setVisibility(View.VISIBLE);
+                            content.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                                    waring.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable editable) {
+
+                                }
+                            });
                         }
-
-                        content.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                                waring.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable editable) {
-
-                            }
-                        });
+                    })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
                     }
-                })
-                .show();
+                });
+        builder.create();
+        builder.show();
     }
 
     /**

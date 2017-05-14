@@ -36,6 +36,4 @@ dependencies {
     compile 'com.koushikdutta.async:androidasync:2.+'
     compile 'com.koushikdutta.ion:ion:2.+'
     testCompile 'junit:junit:4.12'
-    compile 'com.afollestad.material-dialogs:core:0.9.4.4'
-    compile 'com.afollestad.material-dialogs:commons:0.9.4.4'
 }
