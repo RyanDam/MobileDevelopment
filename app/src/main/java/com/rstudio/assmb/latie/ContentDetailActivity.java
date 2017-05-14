@@ -9,10 +9,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rstudio.assmb.latie.contentfragment.dummy.DatabaseHandler;
 import com.rstudio.assmb.latie.contentfragment.dummy.DummyContent;
@@ -107,10 +109,13 @@ public class ContentDetailActivity extends AppCompatActivity {
                 break;
             case R.id.share:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/html");
-                String url = "http://www.google.com.vn";
-                //sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mItem.content);
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
+                sharingIntent.setType("text/plain");
+                if (mItem.originLink == null) {
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,mItem.content);
+                    Log.d("CONTENT",mItem.content);
+                }else {
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mItem.originLink);
+                }
 
                 startActivity(Intent.createChooser(sharingIntent, "Share using"));
                 break;
