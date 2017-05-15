@@ -100,15 +100,22 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                 String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
                 if(receivedText != null) {
                     DatabaseHandler dbHandler = new DatabaseHandler(this);
-                    String abc="";
+
                     if(Patterns.WEB_URL.matcher(receivedText).matches()) {
 
-                        DownloadHTML handle = new DownloadHTML(this,receivedText,dbHandler);
-                        handle.execute(receivedText);
+                        if(receivedText.startsWith("http://") || receivedText.startsWith("http://")) {
+                            DownloadHTML handle = new DownloadHTML(this,receivedText,dbHandler);
+                            handle.execute(receivedText);
+
+                        }else {
+                            String newReceived = "http://".concat(receivedText);
+                            DownloadHTML handle = new DownloadHTML(this,newReceived,dbHandler);
+                            handle.execute(newReceived);
+                        }
 
 
 
-//                        Toast.makeText(this, "URL", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(this, "URL", Toast.LENGTH_SHORT).show();
 
                     }else {
 
@@ -117,7 +124,8 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                         DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,null,false,dateTime);
                         dbHandler.addDummyItem(newItem);
 
-//                        Toast.makeText(this, "Text", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "TExxt", Toast.LENGTH_SHORT).show();
+                        
 
                         reloadData();
                     }
@@ -163,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
         mStaredItemContentFragment.reloadData();
 
     }
+
 
 }
 
