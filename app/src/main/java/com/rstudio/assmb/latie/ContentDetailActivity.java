@@ -110,7 +110,7 @@ public class ContentDetailActivity extends AppCompatActivity {
             case R.id.share:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                if (mItem.originLink == null) {
+                if (mItem.originLink == null || mItem.originLink.equals("")) {
                     sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,mItem.content);
                     Log.d("CONTENT",mItem.content);
                 }else {
