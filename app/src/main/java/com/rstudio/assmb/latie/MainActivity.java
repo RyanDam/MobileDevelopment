@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
                     if(Patterns.WEB_URL.matcher(receivedText).matches()) {
 
-                        if(receivedText.startsWith("http://") || receivedText.startsWith("http://")) {
+                        if(receivedText.startsWith("http://") || receivedText.startsWith("https://")) {
                             DownloadHTML handle = new DownloadHTML(this,receivedText,dbHandler);
                             handle.execute(receivedText);
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
                         Date date = new Date();
                         long dateTime = Long.valueOf(date.getTime());
-                        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,null,false,dateTime);
+                        DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,"",false,dateTime);
                         dbHandler.addDummyItem(newItem);
 
 //                        Toast.makeText(this, "TExxt", Toast.LENGTH_SHORT).show();

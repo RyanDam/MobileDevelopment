@@ -70,6 +70,7 @@ public class DownloadHTML extends AsyncTask <String, Void , String> {
 
         MainActivity acc  = ((MainActivity) context);
         acc.reloadData();
+//        Toast.makeText(acc, "Done", Toast.LENGTH_SHORT).show();
     }
 }
 
