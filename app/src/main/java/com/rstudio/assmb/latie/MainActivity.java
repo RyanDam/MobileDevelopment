@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
 
 
 
-                       Toast.makeText(this, "URL", Toast.LENGTH_SHORT).show();
+//                       Toast.makeText(this, "URL", Toast.LENGTH_SHORT).show();
 
                     }else {
 
@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements ItemModelFragment
                         DummyContent.DummyItem newItem = new DummyContent.DummyItem("1","Received Text",receivedText,null,false,dateTime);
                         dbHandler.addDummyItem(newItem);
 
-                        Toast.makeText(this, "TExxt", Toast.LENGTH_SHORT).show();
-                        
+//                        Toast.makeText(this, "TExxt", Toast.LENGTH_SHORT).show();
+
 
                         reloadData();
                     }
